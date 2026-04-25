@@ -1,0 +1,143 @@
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #ff6b35;
+  --brand-dark: #e55a25;
+}
+
+@media (pointer: fine) {
+  * {
+    cursor: none !important;
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  background: #080c1a;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.font-display {
+  font-family: "Space Grotesk", sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.animate-fade-up {
+  animation: fadeUp 620ms ease-out both;
+}
+
+.animate-fade-up-delay {
+  animation: fadeUp 820ms ease-out both;
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mesh-bg {
+  background:
+    radial-gradient(circle at 12% 12%, rgba(255, 107, 53, 0.26), transparent 34%),
+    radial-gradient(circle at 82% 20%, rgba(255, 63, 109, 0.16), transparent 30%),
+    radial-gradient(circle at 28% 78%, rgba(252, 191, 73, 0.12), transparent 34%),
+    radial-gradient(circle at 80% 78%, rgba(74, 222, 128, 0.08), transparent 32%);
+}
+
+.mesh-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.02'%3E%3Ccircle cx='3' cy='3' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+
+.section-kicker {
+  font-size: 0.73rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: #e2e8f0;
+}
+
+.section-title {
+  margin-top: 0.6rem;
+  max-width: 52rem;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: clamp(1.8rem, 3vw, 2.6rem);
+  line-height: 1.2;
+  font-weight: 700;
+  color: #fff;
+}
+
+.btn-ripple {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s ease, box-shadow 0.22s ease, background-color 0.2s ease;
+}
+
+.btn-ripple::after {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.25) 0%, transparent 58%);
+  transform: scale(0);
+  opacity: 0;
+  transition: transform 0.35s ease, opacity 0.35s ease;
+}
+
+.btn-ripple:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(15, 23, 42, 0.55);
+}
+
+.btn-ripple:hover::after {
+  transform: scale(1);
+  opacity: 1;
+}
+
+.cta-glow {
+  animation: ctaGlow 3s ease-in-out infinite;
+}
+
+@keyframes ctaGlow {
+  0%,
+  100% {
+    box-shadow: 0 0 35px rgba(71, 85, 105, 0.2);
+  }
+  50% {
+    box-shadow: 0 0 75px rgba(30, 41, 59, 0.35);
+  }
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari and Opera */
+}

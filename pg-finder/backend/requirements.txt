@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+groq
+python-dotenv
+sentence-transformers
+pydantic
+langgraph
+langchain
+langchain-groq
+langchain-core
+qdrant-client
+fastembed
