@@ -1,4 +1,16 @@
-# ── Stage: Runtime ──────────────────────────────────────────────────────────
+# ── Stage 1: Build Frontend ──────────────────────────────────────────────────
+FROM node:20-alpine AS frontend-builder
+
+WORKDIR /frontend
+
+# Copy frontend source
+COPY ../frontend/package.json ../frontend/package-lock.json ./
+RUN npm ci
+
+COPY ../frontend . .
+RUN npm run build
+
+# ── Stage 2: Runtime ─────────────────────────────────────────────────────────
 FROM python:3.11-slim
 
 # curl is only needed for the healthcheck
@@ -33,7 +45,11 @@ ENV HF_TOKEN=
 # Copy application source
 COPY . .
 
+# Copy built frontend from Stage 1
+COPY --from=frontend-builder /frontend/dist ./static
+
 EXPOSE 8000
 
-# NOTE: env vars (GROQ_API_KEY, QDRANT_URL, etc.) are injected by docker-compose
+# NOTE: env vars (GROQ_API_KEY, QDRANT_URL, etc.) are injected by Railway
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+
