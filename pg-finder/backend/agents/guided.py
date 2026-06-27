@@ -2,7 +2,7 @@ import re
 import difflib
 
 from agents.state import AgentState
-from chroma_store import search_pgs
+from qdrant_store import search_pgs
 
 AREAS = [
     "Memnagar",

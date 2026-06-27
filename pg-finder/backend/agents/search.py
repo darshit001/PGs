@@ -9,7 +9,7 @@ from langchain_groq import ChatGroq
 from qdrant_client.http import models
 
 from agents.state import AgentState
-from chroma_store import search_pgs
+from qdrant_store import search_pgs
 
 load_dotenv()
 

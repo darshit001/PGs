@@ -5,5 +5,13 @@ export default defineConfig({
   plugins: [react()],
   server: {
     allowedHosts: ["localhost", "127.0.0.1", "4712-122-167-187-68.ngrok-free.app"],
+    // Proxy /api/* to the backend so BASE_URL="/api" works in both dev and Docker
+    proxy: {
+      "/api": {
+        target: "http://localhost:8000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
   },
 });

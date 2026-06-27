@@ -5,7 +5,7 @@ from langchain_core.messages import AIMessage, HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 
 from agents.state import AgentState
-from chroma_store import search_pgs
+from qdrant_store import search_pgs
 
 load_dotenv()
 

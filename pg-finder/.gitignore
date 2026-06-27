@@ -4,9 +4,8 @@ __pycache__/
 .venv/
 venv/
 
-# Backend secrets and local db
+# Backend secrets
 backend/.env
-backend/chroma_db/
 
 # Node
 frontend/node_modules/
@@ -14,3 +13,6 @@ frontend/dist/
 
 # OS
 .DS_Store
+
+# Docker local overrides
+docker-compose.override.yml

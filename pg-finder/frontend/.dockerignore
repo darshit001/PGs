@@ -1,0 +1,16 @@
+# Dependencies (rebuilt inside container)
+node_modules/
+
+# Build output (rebuilt inside container)
+dist/
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store

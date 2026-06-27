@@ -1,4 +1,6 @@
-const BASE_URL = "http://localhost:8000";
+// In Docker: Nginx reverse-proxies /api/* → backend container (http://backend:8000)
+// In local dev: Update this to "http://localhost:8000" or use Vite proxy
+const BASE_URL = "/api";
 
 export async function sendMessage({
   messages,

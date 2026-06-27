@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from chroma_store import upsert_documents
+from qdrant_store import upsert_documents
 
 
 DATA_FILES = [

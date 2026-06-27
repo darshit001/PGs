@@ -20,14 +20,14 @@ qdrant_client.set_model("BAAI/bge-small-en-v1.5")
 qdrant_client.set_sparse_model("Qdrant/bm25")
 
 def upsert_documents(documents: list[str], metadatas: list[dict[str, Any]], ids: list[str]) -> None:
-    # Delete the old dense-only collection
+    # Delete the old collection before rebuilding
     if qdrant_client.collection_exists(COLLECTION_NAME):
         qdrant_client.delete_collection(COLLECTION_NAME)
-        
+
     print("Rebuilding Qdrant Collection with Dense + Sparse Hybrid Index...")
 
     numeric_ids = [abs(hash(idx)) % (10**9) for idx in ids]
-    
+
     # qdrant_client.add() automatically batches and embeds dense/sparse vectors if models are set
     qdrant_client.add(
         collection_name=COLLECTION_NAME,
@@ -38,21 +38,21 @@ def upsert_documents(documents: list[str], metadatas: list[dict[str, Any]], ids:
 
 
 def search_pgs(query: str, n_results: int = 10, metadata_filter: models.Filter | None = None):
-    # This invokes native Reciprocal Rank Fusion (RRF) between exact BM25 keywords and deep semantic meaning
+    # Invokes native Reciprocal Rank Fusion (RRF) between BM25 keywords and semantic vectors
     results = qdrant_client.query(
         collection_name=COLLECTION_NAME,
         query_text=query,
         limit=n_results,
         query_filter=metadata_filter
     )
-    
+
     scored_items = []
     for item in results:
         metadata = dict(item.metadata or {})
         doc = metadata.pop("document", "")
         if "id" not in metadata and item.id:
             metadata["id"] = str(item.id)
-            
+
         scored_items.append((float(item.score), doc, metadata))
 
     return {

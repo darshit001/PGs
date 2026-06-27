@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from groq import Groq
 from langgraph.graph import END, START, StateGraph
 
-from chroma_store import search_pgs
+from qdrant_store import search_pgs
 
 load_dotenv()
 client = Groq(api_key=os.environ.get("GROQ_API_KEY"))

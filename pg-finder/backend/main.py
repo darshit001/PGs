@@ -11,7 +11,13 @@ app = FastAPI(title="PG Finder API — LangGraph Edition")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://localhost:5173", "http://localhost:5174"],
+    # Local dev ports + Docker-exposed frontend port
+    allow_origins=[
+        "http://localhost:3000",   # Docker frontend (Nginx)
+        "http://localhost:5173",   # Vite dev server
+        "http://localhost:5174",   # Vite dev server (alternate)
+        "http://localhost:8080",
+    ],
     allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,
     allow_methods=["*"],

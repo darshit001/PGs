@@ -1,0 +1,42 @@
+services:
+  # ── Backend: FastAPI + LangGraph + Groq + Qdrant Cloud ─────────────────────
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env          # injects GROQ_API_KEY, QDRANT_URL, QDRANT_API_KEY, etc.
+    ports:
+      - "8000:8000"             # optional — expose for direct API debugging
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # ── Frontend: React SPA served via Nginx (with /api/ reverse-proxy) ─────────
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"               # access the app at http://localhost:3000
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  # ── Seed: one-time data loader into Qdrant Cloud ────────────────────────────
+  # Run manually when needed:
+  #   docker compose --profile seed run --rm seed
+  seed:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    env_file:
+      - ./backend/.env
+    command: python seed_data.py
+    profiles:
+      - seed
