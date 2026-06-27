@@ -20,7 +20,7 @@ app.add_middleware(
         "http://localhost:5174",   # Vite dev server (alternate)
         "http://localhost:8080",
     ],
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$|^https://.*\.hf\.space$",
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -41,6 +41,11 @@ class ChatRequest(BaseModel):
 
 @app.get("/health")
 def health():
+    return {"status": "ok", "agent": "langgraph"}
+
+
+@app.get("/api/health")
+def health_api():
     return {"status": "ok", "agent": "langgraph"}
 
 
@@ -73,6 +78,12 @@ def chat(request: ChatRequest):
         "count": final_state["pg_count"],
         "session_data": final_state.get("session_data", {}),
     }
+
+
+# Mirror /chat under /api/chat prefix for HF Spaces (no reverse proxy)
+@app.post("/api/chat")
+def chat_api(request: ChatRequest):
+    return chat(request)
 
 
 # Serve static frontend files

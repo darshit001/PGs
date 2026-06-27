@@ -1,3 +1,13 @@
+---
+title: PG Finder Ahmedabad
+emoji: 🏠
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # PG Finder Ahmedabad
 
 Full-stack Agentic AI chatbot to help users find PG accommodations in Ahmedabad.
@@ -6,10 +16,10 @@ Full-stack Agentic AI chatbot to help users find PG accommodations in Ahmedabad.
 
 - Frontend: React 18 + Vite + Tailwind CSS v3
 - Backend: FastAPI + Uvicorn
-- Vector DB: ChromaDB (persistent local)
+- Vector DB: Qdrant Cloud (hybrid search — dense + sparse)
 - Orchestration: LangGraph multi-agent system
-- LLM: Groq via LangChain (`llama-3.3-70b-versatile`)
-- Data: `backend/pg_data.json`
+- LLM: Groq (`llama-3.3-70b-versatile`)
+- Embeddings: fastembed (`BAAI/bge-small-en-v1.5` + `Qdrant/bm25`)
 
 ## Project Structure
 
