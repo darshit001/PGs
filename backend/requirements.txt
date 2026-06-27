@@ -10,3 +10,4 @@ langchain-core
 qdrant-client
 fastembed
 sentence-transformers
+
