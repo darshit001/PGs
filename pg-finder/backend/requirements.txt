@@ -9,3 +9,4 @@ langchain-groq
 langchain-core
 qdrant-client
 fastembed
+sentence-transformers
