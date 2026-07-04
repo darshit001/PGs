@@ -1,13 +1,3 @@
----
-title: PG Finder Ahmedabad
-emoji: 🏠
-colorFrom: blue
-colorTo: purple
-sdk: docker
-app_port: 7860
-pinned: false
----
-
 # StayEase AI — Ahmedabad PG Discovery
 
 StayEase AI is a conversational AI companion designed to make finding Paying Guest (PG) accommodations in Ahmedabad simple, stress-free, and immediate. Instead of scrolling through endless static listing sites, filtering through rigid columns, or calling phone numbers just to find out basic details, StayEase AI lets you search, ask questions, and connect with owners directly through natural chat.
