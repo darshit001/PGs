@@ -16,3 +16,6 @@ frontend/dist/
 
 # Docker local overrides
 docker-compose.override.yml
+
+# Backend static web bundle
+backend/static/

@@ -4,6 +4,14 @@ StayEase AI is a conversational AI companion designed to make finding Paying Gue
 
 ---
 
+## 📸 App Preview
+
+| Landing Page | Chat Search Interface |
+| :---: | :---: |
+| ![Landing Page Preview](assets/landing_page_mockup.png) | ![Chat Search Interface Preview](assets/chat_interface_mockup.png) |
+
+---
+
 ## 🛑 The Problem
 
 Finding a PG accommodation is a frustrating experience for students and young professionals:
