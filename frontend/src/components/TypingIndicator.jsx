@@ -1,18 +1,16 @@
 export default function TypingIndicator() {
   return (
-    <div className="flex w-fit items-center gap-1 rounded-2xl rounded-bl-none border border-white/10 bg-white/10 px-4 py-3">
-      <span
-        className="h-2 w-2 animate-bounce rounded-full bg-slate-300"
-        style={{ animationDelay: "0ms" }}
-      />
-      <span
-        className="h-2 w-2 animate-bounce rounded-full bg-slate-300"
-        style={{ animationDelay: "150ms" }}
-      />
-      <span
-        className="h-2 w-2 animate-bounce rounded-full bg-slate-300"
-        style={{ animationDelay: "300ms" }}
-      />
+    <div className="flex w-fit items-center gap-1.5 rounded-2xl rounded-bl-none border border-white/10 bg-slate-800/60 px-5 py-3.5 backdrop-blur-sm">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="h-2.5 w-2.5 rounded-full bg-gradient-to-br from-brand to-brand-light"
+          style={{
+            animation: "wave 1.4s ease-in-out infinite",
+            animationDelay: `${i * 0.15}s`,
+          }}
+        />
+      ))}
     </div>
   );
 }

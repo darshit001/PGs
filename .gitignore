@@ -11,6 +11,10 @@ backend/.env
 frontend/node_modules/
 frontend/dist/
 
+# Local run logs
+backend/run.*.log
+frontend/run.*.log
+
 # OS
 .DS_Store
 
