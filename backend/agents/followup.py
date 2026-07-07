@@ -1,4 +1,3 @@
-import json
 import os
 import difflib
 
@@ -6,6 +5,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 
+from agents.json_utils import safe_json_parse
 from agents.state import AgentState
 from qdrant_store import search_pgs
 
@@ -212,13 +212,7 @@ def followup_node(state: AgentState) -> AgentState:
 
         messages = [SystemMessage(content=FOLLOWUP_SYSTEM), HumanMessage(content=context)]
         raw = llm.invoke(messages).content.strip()
-
-        try:
-            if raw.startswith("```"):
-                raw = raw.split("```")[1].lstrip("json").strip()
-            extracted = json.loads(raw)
-        except Exception:
-            extracted = {"refined_query": state["user_message"], "filters": {}}
+        extracted = safe_json_parse(raw, {"refined_query": state["user_message"], "filters": {}})
 
         query = extracted.get("refined_query", state["user_message"])
         filters = extracted.get("filters", {})

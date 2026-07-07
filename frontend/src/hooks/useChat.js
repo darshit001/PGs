@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { sendMessage } from "../utils/api";
 
 let messageIdCounter = 0;
@@ -27,13 +27,39 @@ const WELCOME = {
 
 const MAX_RETRIES = 2;
 const RETRY_DELAY = 1500;
+const STORAGE_KEY = "stayease_chat_v1";
+
+function loadPersisted() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !Array.isArray(parsed.messages) || parsed.messages.length === 0) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export function useChat() {
-  const [messages, setMessages] = useState([WELCOME]);
-  const [apiHistory, setApiHistory] = useState([]);
+  const persisted = loadPersisted();
+  const [messages, setMessages] = useState(persisted?.messages ?? [WELCOME]);
+  const [apiHistory, setApiHistory] = useState(persisted?.apiHistory ?? []);
   const [loading, setLoading] = useState(false);
-  const [sessionData, setSessionData] = useState({});
-  const [pgCount, setPgCount] = useState(0);
+  const [sessionData, setSessionData] = useState(persisted?.sessionData ?? {});
+  const [pgCount, setPgCount] = useState(persisted?.pgCount ?? 0);
+
+  // Persist the conversation so a refresh doesn't lose the user's progress.
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify({ messages, apiHistory, sessionData, pgCount })
+      );
+    } catch {
+      /* storage unavailable — session stays in-memory only */
+    }
+  }, [messages, apiHistory, sessionData, pgCount]);
 
   const sendUserMessage = useCallback(async (text, messageSource = "typed") => {
     const userMsg = {
@@ -116,7 +142,12 @@ export function useChat() {
     setApiHistory([]);
     setSessionData({});
     setPgCount(0);
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* ignore */
+    }
   }, []);
 
-  return { messages, loading, sendUserMessage, sendButtonClick, resetChat };
+  return { messages, loading, sessionData, sendUserMessage, sendButtonClick, resetChat };
 }

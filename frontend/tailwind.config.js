@@ -5,16 +5,16 @@ export default {
     extend: {
       colors: {
         brand: {
-          DEFAULT: "#10b981", // emerald-500 — primary brand
-          light: "#6ee7b7",   // emerald-300 — light accent
-          lighter: "#d1fae5", // emerald-100 — badges, backgrounds
-          dark: "#059669",    // emerald-600 — hover state
-          darker: "#047857",  // emerald-700 — active/pressed
+          DEFAULT: "#6366f1", // indigo-500 — primary brand
+          light: "#a5b4fc",   // indigo-300 — light accent
+          lighter: "#e0e7ff", // indigo-100 — badges, backgrounds
+          dark: "#4f46e5",    // indigo-600 — hover state
+          darker: "#4338ca",  // indigo-700 — active/pressed
         },
         accent: {
-          DEFAULT: "#14b8a6", // teal-500 — secondary accent
-          light: "#5eead4",   // teal-300
-          dark: "#0d9488",    // teal-600
+          DEFAULT: "#fbbf24", // amber-400 — secondary accent (CTAs, ratings, glow)
+          light: "#fde68a",   // amber-200
+          dark: "#f59e0b",    // amber-500
         },
         surface: {
           DEFAULT: "#0f172a", // slate-900 — main bg
@@ -49,8 +49,8 @@ export default {
           "100%": { backgroundPosition: "200% center" },
         },
         glowPulse: {
-          "0%, 100%": { boxShadow: "0 0 35px rgba(16, 185, 129, 0.15)" },
-          "50%": { boxShadow: "0 0 75px rgba(16, 185, 129, 0.3)" },
+          "0%, 100%": { boxShadow: "0 0 35px rgba(99, 102, 241, 0.15)" },
+          "50%": { boxShadow: "0 0 75px rgba(99, 102, 241, 0.3)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },
@@ -62,10 +62,10 @@ export default {
         },
       },
       boxShadow: {
-        glow: "0 0 20px rgba(16, 185, 129, 0.25)",
-        "glow-lg": "0 0 40px rgba(16, 185, 129, 0.3)",
+        glow: "0 0 20px rgba(99, 102, 241, 0.25)",
+        "glow-lg": "0 0 40px rgba(99, 102, 241, 0.3)",
         "card": "0 8px 32px rgba(0, 0, 0, 0.3)",
-        "card-hover": "0 16px 48px rgba(16, 185, 129, 0.15)",
+        "card-hover": "0 16px 48px rgba(99, 102, 241, 0.15)",
       },
     },
   },

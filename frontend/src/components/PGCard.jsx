@@ -2,9 +2,11 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MapPin, Phone, Star, Utensils, CheckCircle2, Heart, Map, Expand, Award, TrendingDown, Sparkles } from "lucide-react";
 import PGCardModal from "./PGCardModal";
+import { useShortlist } from "../context/ShortlistContext";
 
 export default function PGCard({ pg }) {
-  const [saved, setSaved] = useState(false);
+  const { isSaved, toggle } = useShortlist();
+  const saved = isSaved(pg);
   const [showModal, setShowModal] = useState(false);
 
   const minPrice = Math.min(
@@ -19,17 +21,17 @@ export default function PGCard({ pg }) {
   // Determine badge
   let badge = null;
   if (rating >= 4.5) {
-    badge = { label: "Top Rated", icon: Award, color: "text-amber-400 bg-amber-500/10 border-amber-500/20" };
+    badge = { label: "Top Rated", icon: Award, color: "text-accent bg-accent/10 border-accent/20" };
   } else if (minPrice <= 8000) {
-    badge = { label: "Best Value", icon: TrendingDown, color: "text-emerald-400 bg-emerald-500/10 border-emerald-500/20" };
+    badge = { label: "Best Value", icon: TrendingDown, color: "text-brand-light bg-brand/10 border-brand/20" };
   }
 
   // Accent gradient based on rating
   const accentGradient =
     rating >= 4.5
-      ? "from-amber-500 via-yellow-500 to-amber-400"
+      ? "from-accent-dark via-accent to-accent-light"
       : rating >= 4.0
-        ? "from-brand to-teal-500"
+        ? "from-brand to-accent"
         : "from-slate-600 to-slate-500";
 
   return (
@@ -54,7 +56,8 @@ export default function PGCard({ pg }) {
               </span>
               <motion.button
                 whileTap={{ scale: 0.8 }}
-                onClick={() => setSaved(!saved)}
+                onClick={() => toggle(pg)}
+                aria-pressed={saved}
                 className={`rounded-full p-1.5 transition-colors ${
                   saved
                     ? "bg-rose-500/20 text-rose-500"
@@ -76,9 +79,9 @@ export default function PGCard({ pg }) {
                 {badge.label}
               </span>
             )}
-            <div className="flex items-center gap-1 rounded-full bg-yellow-500/10 px-2 py-1">
-              <Star className="h-3.5 w-3.5 fill-yellow-500 text-yellow-500" />
-              <span className="text-xs font-semibold text-yellow-500">{pg.rating}</span>
+            <div className="flex items-center gap-1 rounded-full bg-accent/10 px-2 py-1">
+              <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+              <span className="text-xs font-semibold text-accent">{pg.rating}</span>
             </div>
             <span className="text-xs text-slate-400">({pg.total_reviews} reviews)</span>
             <span className="flex items-center gap-1 text-xs text-emerald-400">
@@ -147,7 +150,7 @@ export default function PGCard({ pg }) {
           {/* Footer: Owner + Actions */}
           <div className="mt-auto pt-4 flex items-center justify-between border-t border-white/10">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand to-teal-600 text-xs font-bold text-white">
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-brand to-accent-dark text-xs font-bold text-white">
                 {pg.owner_name ? pg.owner_name.charAt(0) : "O"}
               </div>
               <div>

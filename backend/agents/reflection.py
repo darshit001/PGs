@@ -2,6 +2,7 @@ import json
 import os
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
+from agents.json_utils import safe_json_parse
 from agents.state import AgentState
 
 llm = ChatGroq(
@@ -42,19 +43,18 @@ def reflection_node(state: AgentState) -> AgentState:
     
     prompt = REFLECTION_SYSTEM.format(user_query=query, filters=json.dumps(filters, indent=2))
     raw = llm.invoke([SystemMessage(content="You are a smart JSON API."), HumanMessage(content=prompt)]).content.strip()
-    
-    try:
-        new_filters = json.loads(raw)
-    except Exception:
-        # Fallback manual relaxation
-        new_filters = dict(filters)
-        new_filters["max_price"] = None
-        new_filters["food_included"] = None
-        new_filters["area"] = None
-        
+
+    fallback_filters = dict(filters)
+    fallback_filters["max_price"] = None
+    fallback_filters["food_included"] = None
+    fallback_filters["area"] = None
+
+    new_filters = safe_json_parse(raw, fallback_filters)
+    new_filters["gender"] = filters.get("gender")  # rule 4 is not optional — enforce it in code, not just prompt
+
     session = state.get("session_data", {})
     
-    msg_prefix = "I couldn't find an exact match for your strict requirements, so I expanded the search parameters a bit. Here is what I found:\n\n"
+    msg_prefix = "I couldn't find an exact match for your strict requirements, so I expanded the search a bit — "
     
     return {
         **state,

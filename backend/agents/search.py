@@ -1,4 +1,3 @@
-import json
 import os
 import re
 import difflib
@@ -8,6 +7,7 @@ from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 from qdrant_client.http import models
 
+from agents.json_utils import safe_json_parse
 from agents.state import AgentState
 from qdrant_store import search_pgs
 
@@ -245,36 +245,47 @@ def _build_qdrant_filter(filters: dict) -> models.Filter | None:
     return models.Filter(must=must_conditions)
 
 
+MAX_REFLECTION_ATTEMPTS = 2
+
+
 def search_node(state: AgentState) -> AgentState:
-    messages = [SystemMessage(content=SEARCH_SYSTEM), HumanMessage(content=state["user_message"])]
-    raw = llm.invoke(messages).content.strip()
-
-    try:
-        if raw.startswith("```"):
-            raw = raw.split("```")[1].lstrip("json").strip()
-        extracted = json.loads(raw)
-    except Exception:
-        extracted = {"query": state["user_message"], "filters": {}}
-
-    filters = _sanitize_extracted_filters(extracted.get("filters", {}) or {}, state["user_message"])
-    inferred_area = _detect_area_from_text(state["user_message"])
-    normalized_area = _normalize_area(filters.get("area")) or inferred_area
-    if normalized_area:
-        filters["area"] = normalized_area
-
-    query = extracted.get("query", state["user_message"])
-    if normalized_area and normalized_area.lower() not in query.lower():
-        query = f"{query} in {normalized_area}"
-
+    incoming_intent = state.get("intent", "")
     session = dict(state.get("session_data", {}) or {})
-    
-    if filters.get("gender") and filters.get("gender") != "Both":
-        session["_global_gender"] = filters.get("gender")
-    elif not filters.get("gender") and session.get("_global_gender"):
-        filters["gender"] = session.get("_global_gender")
-        if query == state["user_message"]:
-            query += f" for {session.get('_global_gender')}"
-            
+
+    # A reflection pass arrives with already-relaxed filters in extracted_filters —
+    # reuse them instead of re-running the (deterministic) extraction LLM, which would
+    # just reproduce the exact filters that failed last time and loop forever.
+    is_reflection_pass = incoming_intent == "reflect_and_search" and state.get("extracted_filters") is not None
+
+    if not is_reflection_pass:
+        session.pop("_reflection_attempts", None)
+
+    if is_reflection_pass:
+        filters = dict(state.get("extracted_filters") or {})
+        query = session.get("_last_query") or state["user_message"]
+        normalized_area = filters.get("area")
+    else:
+        messages = [SystemMessage(content=SEARCH_SYSTEM), HumanMessage(content=state["user_message"])]
+        raw = llm.invoke(messages).content.strip()
+        extracted = safe_json_parse(raw, {"query": state["user_message"], "filters": {}})
+
+        filters = _sanitize_extracted_filters(extracted.get("filters", {}) or {}, state["user_message"])
+        inferred_area = _detect_area_from_text(state["user_message"])
+        normalized_area = _normalize_area(filters.get("area")) or inferred_area
+        if normalized_area:
+            filters["area"] = normalized_area
+
+        query = extracted.get("query", state["user_message"])
+        if normalized_area and normalized_area.lower() not in query.lower():
+            query = f"{query} in {normalized_area}"
+
+        if filters.get("gender") and filters.get("gender") != "Both":
+            session["_global_gender"] = filters.get("gender")
+        elif not filters.get("gender") and session.get("_global_gender"):
+            filters["gender"] = session.get("_global_gender")
+            if query == state["user_message"]:
+                query += f" for {session.get('_global_gender')}"
+
     session["_last_filters"] = filters
     session["_last_query"] = query
 
@@ -283,30 +294,58 @@ def search_node(state: AgentState) -> AgentState:
     matched = chroma_results.get("metadatas", [[]])[0]
 
     relaxed_filters_used = False
-    
+    msg = ""
+
     if not matched and qdrant_filter:
-        # Soft matching framework via LangGraph reflection trigger
-        # We pass intent back to graph to trigger reflection if needed, but for now we try a quick fallback
+        # Soft matching framework: try dropping budget before giving up on this pass
         loose = dict(filters)
         loose["max_price"] = None
         loose_filter = _build_qdrant_filter(loose)
-        
+
         fallback_results = search_pgs(query, n_results=5, metadata_filter=loose_filter)
         matched = fallback_results.get("metadatas", [[]])[0]
-        
+
         if matched:
             relaxed_filters_used = True
-            msg = f"We couldn't find an exact match under your budget, but here are some popular options matching your other criteria:"
+            msg = "We couldn't find an exact match under your budget, but here are some popular options matching your other criteria:"
         else:
-            # Tell graph to deeply reflect if even fallback fails
+            attempts = int(session.get("_reflection_attempts", 0) or 0)
+            if attempts < MAX_REFLECTION_ATTEMPTS:
+                # Ask the reflection agent to relax filters further, then try again.
+                session["_reflection_attempts"] = attempts + 1
+                return {
+                    **state,
+                    "session_data": session,
+                    "intent": "reflect_search_failure",
+                    "extracted_filters": filters,
+                }
+            # Reflection has already relaxed filters as far as it should — stop looping
+            # and show the user a graceful empty state instead of erroring out.
+            session.pop("_reflection_attempts", None)
+            nearby = _get_nearby_areas(normalized_area)
             return {
                 **state,
                 "session_data": session,
-                "intent": "reflect_search_failure",
-                "extracted_filters": filters,
+                "intent": "search",
+                "response_mode": "results",
+                "response_message": NOT_FOUND_MESSAGE,
+                "quick_replies": [
+                    f"Try {nearby[0]}",
+                    f"Try {nearby[1]}",
+                    f"Show all in {normalized_area}" if normalized_area else "Show all in Memnagar",
+                ],
+                "pgs": [],
+                "pg_count": 0,
             }
-            
-    qna_prefix = f"**Here is what you asked:**\n{state.get('response_message', '')}\n\n**PG Results:**\n" if state.get("intent", "") == "qna_and_search" and state.get("response_message") else ""
+
+    session.pop("_reflection_attempts", None)
+
+    qna_prefix = (
+        f"**Here is what you asked:**\n{state.get('response_message', '')}\n\n**PG Results:**\n"
+        if incoming_intent == "qna_and_search" and state.get("response_message")
+        else ""
+    )
+    reflection_prefix = state.get("response_message", "") if is_reflection_pass else ""
 
     if matched:
         if not relaxed_filters_used:
@@ -321,7 +360,7 @@ def search_node(state: AgentState) -> AgentState:
             f"Show all in {normalized_area}" if normalized_area else "Show all in Memnagar",
         ]
 
-    msg = qna_prefix + msg
+    msg = qna_prefix + reflection_prefix + msg
 
     session["_last_results"] = [{"id": pg.get("id", ""), "name": pg.get("name", "")} for pg in matched]
     session["_last_results_details"] = [pg.get("_doc", "") for pg in matched[:4]]
@@ -329,6 +368,7 @@ def search_node(state: AgentState) -> AgentState:
     return {
         **state,
         "session_data": session,
+        "intent": "search",
         "response_mode": "results",
         "response_message": msg,
         "quick_replies": quick_replies,

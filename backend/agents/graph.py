@@ -52,9 +52,6 @@ def build_graph():
         if state.get("intent", "") == "reflect_search_failure":
             return "reflection"
         return END
-        
-    def route_after_reflection(state: AgentState) -> str:
-        return "search"
 
     graph.add_edge("greeting", END)
     graph.add_conditional_edges("search", route_after_search, {"reflection": "reflection", END: END})

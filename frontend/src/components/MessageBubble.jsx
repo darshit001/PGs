@@ -44,7 +44,7 @@ export default function MessageBubble({ message, onQuickReply }) {
   if (isUser) {
     return (
       <motion.div variants={bubbleVariants} initial="hidden" animate="visible" className="mb-4 flex flex-col items-end">
-        <div className="max-w-xs rounded-2xl rounded-br-sm bg-gradient-to-br from-brand to-teal-600 px-4 py-3 text-[15px] leading-relaxed text-white shadow-[0_4px_14px_0_rgb(16,185,129,0.25)] sm:max-w-md">
+        <div className="max-w-xs rounded-2xl rounded-br-sm bg-gradient-to-br from-brand to-brand-dark px-4 py-3 text-[15px] leading-relaxed text-white shadow-[0_4px_14px_0_rgb(99,102,241,0.3)] sm:max-w-md">
           {message.content}
         </div>
         {timeStr && (

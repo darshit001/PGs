@@ -1,4 +1,4 @@
-from typing import Any, List, TypedDict
+from typing import List, Optional, TypedDict
 
 
 class AgentState(TypedDict, total=False):
@@ -9,7 +9,8 @@ class AgentState(TypedDict, total=False):
     session_data: dict
 
     # Routing
-    intent: str  # "greeting" | "search" | "guided" | "followup" | "qna"
+    intent: str  # "greeting" | "search" | "guided" | "followup" | "qna" | "reflect_search_failure" | "reflect_and_search"
+    extracted_filters: Optional[dict]  # relaxed filters handed from reflection_node back to search_node
 
     # Output
     response_mode: str  # "question" | "results" | "answer" | "greeting"

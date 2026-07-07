@@ -1,8 +1,12 @@
 import { motion } from "framer-motion";
 import { X, MapPin, Phone, Star, Utensils, CheckCircle2, Heart, Map, Building2, Shield, Clock } from "lucide-react";
+import { useShortlist } from "../context/ShortlistContext";
 
 export default function PGCardModal({ pg, onClose }) {
+  const { isSaved, toggle } = useShortlist();
   if (!pg) return null;
+
+  const saved = isSaved(pg);
 
   const minPrice = Math.min(
     parseInt(pg.single_price, 10) || 99999,
@@ -29,14 +33,27 @@ export default function PGCardModal({ pg, onClose }) {
         className="relative w-full max-w-lg max-h-[85vh] overflow-y-auto rounded-3xl border border-white/10 bg-slate-900 shadow-2xl scrollbar-thin"
       >
         {/* Header with gradient */}
-        <div className="relative overflow-hidden rounded-t-3xl bg-gradient-to-br from-brand/20 via-teal-600/10 to-slate-900 p-6 pb-8">
-          <button
-            onClick={onClose}
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white/70 backdrop-blur-sm transition hover:bg-black/50 hover:text-white"
-            aria-label="Close modal"
-          >
-            <X className="h-5 w-5" />
-          </button>
+        <div className="relative overflow-hidden rounded-t-3xl bg-gradient-to-br from-brand/20 via-accent/10 to-slate-900 p-6 pb-8">
+          <div className="absolute right-4 top-4 flex items-center gap-2">
+            <button
+              onClick={() => toggle(pg)}
+              aria-pressed={saved}
+              className={`flex h-9 w-9 items-center justify-center rounded-full backdrop-blur-sm transition ${
+                saved ? "bg-rose-500/20 text-rose-400" : "bg-black/30 text-white/70 hover:bg-black/50 hover:text-white"
+              }`}
+              aria-label={saved ? "Remove from shortlist" : "Add to shortlist"}
+              title={saved ? "Remove from shortlist" : "Add to shortlist"}
+            >
+              <Heart className={`h-5 w-5 ${saved ? "fill-rose-400" : ""}`} />
+            </button>
+            <button
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/30 text-white/70 backdrop-blur-sm transition hover:bg-black/50 hover:text-white"
+              aria-label="Close modal"
+            >
+              <X className="h-5 w-5" />
+            </button>
+          </div>
 
           <div className="flex items-start gap-3">
             <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-2xl bg-brand/20 text-brand backdrop-blur-sm">
@@ -56,8 +73,8 @@ export default function PGCardModal({ pg, onClose }) {
             <span className="rounded-full bg-brand/20 px-3 py-1 text-xs font-semibold text-brand-light backdrop-blur-sm">
               {pg.gender}
             </span>
-            <span className="flex items-center gap-1 rounded-full bg-yellow-500/10 px-3 py-1 text-xs font-semibold text-yellow-400">
-              <Star className="h-3 w-3 fill-yellow-400" /> {pg.rating}
+            <span className="flex items-center gap-1 rounded-full bg-accent/10 px-3 py-1 text-xs font-semibold text-accent">
+              <Star className="h-3 w-3 fill-accent" /> {pg.rating}
             </span>
             <span className="flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-400">
               <Shield className="h-3 w-3" /> Verified
@@ -137,7 +154,7 @@ export default function PGCardModal({ pg, onClose }) {
           <div className="border-t border-white/5 pt-5">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-brand to-teal-600 text-sm font-bold text-white">
+                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-brand to-accent-dark text-sm font-bold text-white">
                   {pg.owner_name ? pg.owner_name.charAt(0) : "O"}
                 </div>
                 <div>

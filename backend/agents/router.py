@@ -1,4 +1,3 @@
-import json
 import os
 import re
 import difflib
@@ -7,6 +6,7 @@ from dotenv import load_dotenv
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_groq import ChatGroq
 
+from agents.json_utils import safe_json_parse
 from agents.state import AgentState
 
 load_dotenv()
@@ -286,14 +286,8 @@ def router_node(state: AgentState) -> AgentState:
     ]
 
     raw = llm.invoke(messages).content.strip()
-
-    try:
-        if raw.startswith("```"):
-            raw = raw.split("```")[1].lstrip("json").strip()
-        result = json.loads(raw)
-        intent = result.get("intent", "qna")
-    except Exception:
-        intent = "qna"
+    result = safe_json_parse(raw, {"intent": "qna"})
+    intent = result.get("intent", "qna")
 
     if intent not in {"greeting", "search", "guided", "followup", "qna", "qna_and_search"}:
         intent = "qna"

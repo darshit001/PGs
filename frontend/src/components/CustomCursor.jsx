@@ -49,8 +49,8 @@ export default function CustomCursor() {
         y: cursorY,
         scale: isHovering ? 1.8 : 1,
         boxShadow: isHovering
-          ? "0 0 20px rgba(16, 185, 129, 0.6), 0 0 40px rgba(16, 185, 129, 0.2)"
-          : "0 0 12px rgba(16, 185, 129, 0.4)",
+          ? "0 0 20px rgba(99, 102, 241, 0.6), 0 0 40px rgba(99, 102, 241, 0.2)"
+          : "0 0 12px rgba(99, 102, 241, 0.4)",
       }}
       transition={{ type: "tween", duration: 0.15 }}
     />

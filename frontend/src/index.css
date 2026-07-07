@@ -26,8 +26,8 @@
   }
 
   ::selection {
-    background: rgba(16, 185, 129, 0.3);
-    color: #d1fae5;
+    background: rgba(99, 102, 241, 0.3);
+    color: #e0e7ff;
   }
 }
 
@@ -46,7 +46,7 @@
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.16em;
-    color: #6ee7b7;
+    color: #a5b4fc;
   }
 
   .section-title {
@@ -61,7 +61,7 @@
 
   /* Gradient text */
   .gradient-text {
-    background: linear-gradient(135deg, #6ee7b7, #10b981, #14b8a6);
+    background: linear-gradient(135deg, #a5b4fc, #6366f1, #fbbf24);
     background-size: 200% 200%;
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -71,11 +71,11 @@
   .gradient-text-shimmer {
     background: linear-gradient(
       90deg,
-      #10b981 0%,
-      #6ee7b7 25%,
-      #a7f3d0 50%,
-      #6ee7b7 75%,
-      #10b981 100%
+      #6366f1 0%,
+      #a5b4fc 25%,
+      #e0e7ff 50%,
+      #a5b4fc 75%,
+      #6366f1 100%
     );
     background-size: 200% 100%;
     -webkit-background-clip: text;
@@ -133,20 +133,20 @@
 
   /* Glow effects */
   .glow-brand {
-    box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
+    box-shadow: 0 0 20px rgba(99, 102, 241, 0.25);
   }
 
   .glow-brand-lg {
-    box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 0 40px rgba(99, 102, 241, 0.3);
   }
 
   /* Mesh gradient background */
   .mesh-bg {
     background:
-      radial-gradient(circle at 12% 12%, rgba(16, 185, 129, 0.18), transparent 34%),
-      radial-gradient(circle at 82% 20%, rgba(20, 184, 166, 0.12), transparent 30%),
-      radial-gradient(circle at 28% 78%, rgba(245, 158, 11, 0.08), transparent 34%),
-      radial-gradient(circle at 80% 78%, rgba(74, 222, 128, 0.06), transparent 32%);
+      radial-gradient(circle at 12% 12%, rgba(99, 102, 241, 0.18), transparent 34%),
+      radial-gradient(circle at 82% 20%, rgba(129, 140, 248, 0.12), transparent 30%),
+      radial-gradient(circle at 28% 78%, rgba(251, 191, 36, 0.1), transparent 34%),
+      radial-gradient(circle at 80% 78%, rgba(245, 158, 11, 0.06), transparent 32%);
   }
 
   /* Animated gradient border */
@@ -160,7 +160,7 @@
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(135deg, #10b981, #14b8a6, #10b981);
+    background: linear-gradient(135deg, #6366f1, #fbbf24, #6366f1);
     -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
@@ -178,8 +178,8 @@
   }
 
   @keyframes ctaGlow {
-    0%, 100% { box-shadow: 0 0 35px rgba(16, 185, 129, 0.2); }
-    50% { box-shadow: 0 0 75px rgba(16, 185, 129, 0.35); }
+    0%, 100% { box-shadow: 0 0 35px rgba(99, 102, 241, 0.2); }
+    50% { box-shadow: 0 0 75px rgba(99, 102, 241, 0.35); }
   }
 
   /* Line clamp */
@@ -214,7 +214,7 @@
   /* Thin branded scrollbar */
   .scrollbar-thin {
     scrollbar-width: thin;
-    scrollbar-color: rgba(16, 185, 129, 0.3) transparent;
+    scrollbar-color: rgba(99, 102, 241, 0.3) transparent;
   }
 
   .scrollbar-thin::-webkit-scrollbar {
@@ -227,12 +227,12 @@
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(16, 185, 129, 0.3);
+    background: rgba(99, 102, 241, 0.3);
     border-radius: 3px;
   }
 
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(16, 185, 129, 0.5);
+    background: rgba(99, 102, 241, 0.5);
   }
 
   /* Smooth snap scrolling for carousels */
@@ -242,15 +242,27 @@
   }
 }
 
+/* ── Reduced Motion (Accessibility) ─────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 /* ── Focus Visible (Accessibility) ──────────── */
 :focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
 }
 
 button:focus-visible,
 a:focus-visible,
 input:focus-visible {
-  outline: 2px solid #10b981;
+  outline: 2px solid #6366f1;
   outline-offset: 2px;
 }

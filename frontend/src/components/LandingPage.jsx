@@ -172,12 +172,12 @@ export default function LandingPage({ onStartChat }) {
         <motion.div
           animate={{ scale: [1, 1.2, 1], x: [0, -50, 0], y: [0, 50, 0] }}
           transition={{ duration: 20, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-0 top-[20%] h-[600px] w-[600px] rounded-full bg-teal-600/10 blur-[130px]"
+          className="absolute right-0 top-[20%] h-[600px] w-[600px] rounded-full bg-accent-dark/10 blur-[130px]"
         />
         <motion.div
           animate={{ scale: [1, 1.1, 1], x: [0, 40, 0], y: [0, -30, 0] }}
           transition={{ duration: 18, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full bg-teal-500/10 blur-[100px]"
+          className="absolute -left-32 bottom-0 h-[400px] w-[400px] rounded-full bg-accent/10 blur-[100px]"
         />
       </div>
 
@@ -283,7 +283,7 @@ export default function LandingPage({ onStartChat }) {
                 rotateX: { type: "spring", stiffness: 300, damping: 30, mass: 0.5 },
                 rotateY: { type: "spring", stiffness: 300, damping: 30, mass: 0.5 },
               }}
-              className="relative mx-auto w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/60 p-6 shadow-[0_20px_60px_-15px_rgba(16,185,129,0.25)] backdrop-blur-xl ring-1 ring-white/5"
+              className="relative mx-auto w-full max-w-md rounded-3xl border border-white/10 bg-slate-900/60 p-6 shadow-[0_20px_60px_-15px_rgba(99,102,241,0.25)] backdrop-blur-xl ring-1 ring-white/5"
             >
               <div
                 style={{ transform: "translateZ(30px)" }}
@@ -291,7 +291,7 @@ export default function LandingPage({ onStartChat }) {
               />
               <div
                 style={{ transform: "translateZ(20px)" }}
-                className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-teal-500/20 blur-[50px] pointer-events-none"
+                className="absolute -bottom-10 -left-10 h-32 w-32 rounded-full bg-accent/20 blur-[50px] pointer-events-none"
               />
 
               <div style={{ transform: "translateZ(40px)" }} className="mb-5 flex items-center justify-between border-b border-white/10 pb-4">
@@ -316,7 +316,7 @@ export default function LandingPage({ onStartChat }) {
                       transition={{ type: "spring", bounce: 0.4 }}
                       className={
                         msg.role === "user"
-                          ? "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-gradient-to-br from-brand to-teal-600 px-4 py-2.5 text-white shadow-[0_4px_14px_0_rgb(16,185,129,0.3)]"
+                          ? "ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-sm bg-gradient-to-br from-brand to-brand-dark px-4 py-2.5 text-white shadow-[0_4px_14px_0_rgb(99,102,241,0.3)]"
                           : "mr-auto flex w-fit max-w-[90%] items-start gap-2"
                       }
                     >
@@ -520,7 +520,7 @@ export default function LandingPage({ onStartChat }) {
                   "{t.text}"
                 </p>
                 <div className="mt-6 flex items-center gap-3 border-t border-white/5 pt-5">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand to-teal-600 text-sm font-bold text-white">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-brand to-accent-dark text-sm font-bold text-white">
                     {t.avatar}
                   </div>
                   <div>
@@ -601,7 +601,7 @@ export default function LandingPage({ onStartChat }) {
           <div className="relative overflow-hidden rounded-3xl border border-brand/20 bg-gradient-to-br from-slate-900 via-brand/5 to-slate-900 p-10 text-center md:p-16">
             <div className="pointer-events-none absolute inset-0">
               <div className="absolute left-1/4 top-0 h-64 w-64 rounded-full bg-brand/15 blur-[80px]" />
-              <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-teal-600/10 blur-[80px]" />
+              <div className="absolute bottom-0 right-1/4 h-64 w-64 rounded-full bg-accent-dark/10 blur-[80px]" />
             </div>
             <div className="relative z-10">
               <h2 className="font-display text-3xl font-bold text-white md:text-4xl">

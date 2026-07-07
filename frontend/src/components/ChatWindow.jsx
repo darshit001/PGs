@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Send, Sparkles, RotateCcw, Search, MessageSquare } from "lucide-react";
+import { ArrowLeft, Send, Sparkles, RotateCcw, Search, MessageSquare, Heart } from "lucide-react";
 import { useChat } from "../hooks/useChat";
+import { useShortlist } from "../context/ShortlistContext";
 import MessageBubble from "./MessageBubble";
 import TypingIndicator from "./TypingIndicator";
+import ShortlistDrawer from "./ShortlistDrawer";
+import FilterChips from "./FilterChips";
 
 /* ── Loading progress text ──────────────────── */
 const loadingSteps = [
@@ -13,11 +16,15 @@ const loadingSteps = [
 ];
 
 export default function ChatWindow({ onBack }) {
-  const { messages, loading, sendUserMessage, sendButtonClick, resetChat } = useChat();
+  const { messages, loading, sessionData, sendUserMessage, sendButtonClick, resetChat } = useChat();
+  const { count: shortlistCount } = useShortlist();
   const [input, setInput] = useState("");
   const bottomRef = useRef(null);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [showShortlist, setShowShortlist] = useState(false);
   const [loadingStep, setLoadingStep] = useState(0);
+
+  const activeFilters = sessionData?._last_filters;
 
   /* ── Typewriter Placeholder ────────────────── */
   const placeholders = [
@@ -110,12 +117,12 @@ export default function ChatWindow({ onBack }) {
         <motion.div
           animate={{ scale: [1, 1.15, 1], x: [0, -35, 0], y: [0, 40, 0] }}
           transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute right-0 top-1/3 h-96 w-96 rounded-full bg-teal-500/10 blur-[100px]"
+          className="absolute right-0 top-1/3 h-96 w-96 rounded-full bg-accent/10 blur-[100px]"
         />
         <motion.div
           animate={{ scale: [1, 1.1, 1], x: [0, 25, 0], y: [0, -20, 0] }}
           transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-          className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-teal-600/10 blur-[100px]"
+          className="absolute -bottom-32 left-1/3 h-96 w-96 rounded-full bg-accent-dark/10 blur-[100px]"
         />
       </div>
 
@@ -143,6 +150,19 @@ export default function ChatWindow({ onBack }) {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-3">
+            <button
+              onClick={() => setShowShortlist(true)}
+              className="relative flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
+              aria-label={`Open shortlist${shortlistCount ? ` (${shortlistCount} saved)` : ""}`}
+            >
+              <Heart className={`h-3.5 w-3.5 ${shortlistCount ? "fill-rose-400 text-rose-400" : ""}`} />
+              <span className="hidden sm:inline">Shortlist</span>
+              {shortlistCount > 0 && (
+                <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white">
+                  {shortlistCount}
+                </span>
+              )}
+            </button>
             <button
               onClick={() => setShowResetConfirm(true)}
               className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-slate-300 transition-colors hover:bg-white/10 hover:text-white"
@@ -207,7 +227,7 @@ export default function ChatWindow({ onBack }) {
                         transition={{ delay: i * 0.1, duration: 0.5 }}
                         className="flex h-[280px] w-[280px] sm:w-[320px] flex-shrink-0 flex-col overflow-hidden rounded-2xl border border-white/5 bg-slate-800/40 p-5 shadow-xl backdrop-blur-md"
                       >
-                        <div className="h-1 w-full bg-gradient-to-r from-brand/30 to-teal-500/30 rounded-full mb-4" />
+                        <div className="h-1 w-full bg-gradient-to-r from-brand/30 to-accent/30 rounded-full mb-4" />
                         <div className="h-6 w-3/4 animate-pulse rounded-md bg-slate-700/50" />
                         <div className="mt-2 h-4 w-1/2 animate-pulse rounded-md bg-slate-700/30" />
                         <div className="mt-6 h-20 w-full animate-pulse rounded-xl bg-slate-700/30" />
@@ -236,6 +256,7 @@ export default function ChatWindow({ onBack }) {
         {/* ── Input Area ─────────────────────── */}
         <div className="flex-shrink-0 border-t border-white/10 bg-[#070A14]/80 p-4 backdrop-blur-xl sm:px-6 sm:py-5">
           <div className="mx-auto w-full max-w-full">
+            <FilterChips filters={activeFilters} onEdit={(command) => !loading && sendButtonClick(command)} />
             <div className="relative flex items-center overflow-hidden rounded-2xl border border-white/10 bg-[#0E1527] shadow-inner transition-all focus-within:border-brand/50 focus-within:ring-1 focus-within:ring-brand/30 focus-within:shadow-glow">
               <input
                 type="text"
@@ -262,6 +283,9 @@ export default function ChatWindow({ onBack }) {
           </div>
         </div>
       </div>
+
+      {/* ── Shortlist Drawer ─────────────── */}
+      <ShortlistDrawer open={showShortlist} onClose={() => setShowShortlist(false)} />
 
       {/* ── Reset Confirmation Modal ─────── */}
       <AnimatePresence>
